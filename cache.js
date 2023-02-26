@@ -1,0 +1,3 @@
+'use strct';
+
+module.exports = {};
