@@ -17,9 +17,10 @@ function getWeather (request, response, next) {
     cache[key] = {};
     cache[key].timestamp = Date.now();
     axios.get(weatherUrl)
-      .then(weatherResponse => {weatherResponse.data.results.map(weather => new Forecast(weather));
-        cache[key].data = newWeatherData;
-        response.status(200).send(newWeatherData);
+      .then(data => {
+        const weatherResponse = data.results.map(weather => new Forecast(weather));
+        cache[key].data = weatherResponse;
+        response.status(200).send(weatherResponse);
       })
       .catch(error => next(error));
   }

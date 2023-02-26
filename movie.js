@@ -16,9 +16,10 @@ function getMovie (request, response, next) {
     cache[key] = {};
     cache[key].timestamp = Date.now();
     axios.get(movieUrl)
-      .then(movieResponse => {movieResponse.data.results.map(movie => new Movie(movie));
-        cache[key].data = newMovieData;
-        response.status(200).send(newMovieData);
+      .then(data => {
+        const movieResponse = data.results.map(movie => new Movie(movie));
+        cache[key].data = movieResponse;
+        response.status(200).send(movieResponse);
       })
       .catch(error => next(error));
   }
