@@ -3,7 +3,7 @@
 const axios = require('axios');
 const cache = require('./cache');
 
-function getWeather (request, response, next) {
+function getWeather(request, response, next) {
   const lat = request.query.lat;
   const lon = request.query.lon;
   const key = `lat: ${lat}, lon: ${lon}`;
@@ -14,12 +14,13 @@ function getWeather (request, response, next) {
     response.status(200).send(cache[key].data);
   } else {
     console.log('miss weather cache');
-    cache[key] = {};
-    cache[key].timestamp = Date.now();
     axios.get(weatherUrl)
-      .then(weatherResponse => {weatherResponse.data.results.map(weather => new Forecast(weather));
-        cache[key].data = newWeatherData;
-        response.status(200).send(newWeatherData);
+      .then(data => {
+        const weatherResponse = data.results.map(city => new Forecast(city));
+        cache[key] = {};
+        cache[key].timestamp = Date.now();
+        cache[key].data = weatherResponse;
+        response.status(200).send(weatherResponse);
       })
       .catch(error => next(error));
   }
@@ -27,7 +28,7 @@ function getWeather (request, response, next) {
 
 class Forecast {
   constructor(city) {
-    this.date = city.datetime;
+    this.date = city.date;
     this.description = city.weather.description;
   }
 }
